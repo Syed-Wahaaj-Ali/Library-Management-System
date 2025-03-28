@@ -3,10 +3,12 @@
 #include <stdlib.h>
 #include <ctype.h>
 
+// Define maximum limits for books, users, and admins
 #define MAX_BOOKS 100
 #define MAX_USERS 10
 #define MAX_ADMINS 1
 
+// Structure to hold book information
 typedef struct {
     char title[100];
     char author[100];
@@ -15,6 +17,7 @@ typedef struct {
     int isBorrowed;
 } Book;
 
+// Structure to hold user information
 typedef struct {
     char username[50];
     char password[50];
@@ -22,19 +25,23 @@ typedef struct {
     int borrowedCount;
 } User;
 
+// Structure to hold admin information
 typedef struct {
     char username[50];
     char password[50];
 } Admin;
 
+// Arrays to hold books, users, and admins
 Book books[MAX_BOOKS];
 User users[MAX_USERS];
-Admin admins[MAX_ADMINS] = {{"admin", "admin123"}};
+Admin admins[MAX_ADMINS] = {{"admin", "admin123"}}; // Default admin credentials
 
+// Counters for the number of books, users, and admins
 int bookCount = 0;
 int userCount = 0;
 int adminCount = 1;
 
+// Function declarations for various operations in the system
 int adminLogin();
 int userLogin();
 void adminDashboard();
@@ -62,83 +69,89 @@ void saveUsersToFile();
 
 int main() {
     
+    // Load books and users from files at the start of the program
     loadBooksFromFile();
     loadUsersFromFile();
 
     int choice;
     while (1) {
-        printMainScreen();
+        printMainScreen(); // Display main menu
         printf("Choose an option: ");
         scanf("%d", &choice);
 
+        // Handle user choice
         switch (choice) {
             case 1: 
-                if (adminLogin()) {
+                if (adminLogin()) { // Admin login validation
                     printf("Admin Login Successful!\n");
                     clrscr();
-                    adminDashboard();
+                    adminDashboard(); // Admin dashboard
                 } else {
                     printf("Invalid Admin credentials.\n");
                 }
                 break;
             case 2: 
-                if (userLogin()) {
+                if (userLogin()) { // User login validation
                     printf("User Login Successful!\n");
                     clrscr();
-                    userDashboard();
+                    userDashboard(); // User dashboard
                 } else {
                     printf("Invalid User credentials.\n");
                 }
                 break;
             case 3: 
-                createAccount();
+                createAccount(); // Create a new user account
                 break;
             case 4: 
                 clrscr();
-                displayBooks();
+                displayBooks(); // Display all books
                 break;
             case 5: 
                 clrscr();
-                searchByTitle();
+                searchByTitle(); // Search books by title
                 break;
             case 6: 
                 clrscr();
-                searchByAuthor();
+                searchByAuthor(); // Search books by author
                 break;
             case 7: 
                 clrscr();
-                displayBooksBySection();
+                displayBooksBySection(); // Display books by section
                 break;
             case 0: 
-                
+
+                // Save books and users before exiting
                 saveBooksToFile();
                 saveUsersToFile();
                 printf("Exiting the system...\n");
                 return 0;
             default:
-                printf("Invalid choice. Please try again.\n");
+                printf("Invalid choice. Please try again.\n"); // Invalid choice
         }
     }
     return 0;
 }
 
+// Admin login function
 int adminLogin() {
     clrscr();
     char username[50], password[50];
     printf("\n================================\n\tAdmin Login Page\n================================\n");
     printf("Enter Admin username: ");
-    scanf(" %[^\n]%*c", username);
+    scanf(" %[^\n]%*c", username); // Input username
     printf("Enter Admin password: ");
-    scanf(" %[^\n]%*c", password);
+    scanf(" %[^\n]%*c", password); // Input password
 
+    // Check if entered credentials match any admin
     for (int i = 0; i < adminCount; i++) {
         if (strcmp(admins[i].username, username) == 0 && strcmp(admins[i].password, password) == 0) {
-            return 1;
+            return 1; // Successful login
         }
     }
-    return 0;
+    return 0; // Invalid login
 }
 
+// User login function
 int userLogin() {
     clrscr();
     char username[50], password[50];
@@ -146,21 +159,23 @@ int userLogin() {
     printf("\tUser Login Page");
     printf("\n================================\n");
     printf("Enter User username: ");
-    scanf(" %[^\n]%*c", username);
+    scanf(" %[^\n]%*c", username); // Input username
     printf("Enter User password: ");
-    scanf(" %[^\n]%*c", password);
+    scanf(" %[^\n]%*c", password); // Input password
 
+    // Check if entered credentials match any user
     for (int i = 0; i < userCount; i++) {
         if (strcmp(users[i].username, username) == 0 && strcmp(users[i].password, password) == 0) {
-            return 1;
+            return 1; // Successful login
         }
     }
-    return 0;
+    return 0; // Invalid login
 }
 
+// Function to create a new user account
 void createAccount() {
     clrscr();
-    if (userCount >= MAX_USERS) {
+    if (userCount >= MAX_USERS) { // Check if user limit is reached
         printf("Sorry, user limit reached. Cannot create more accounts.\n");
         return;
     }
@@ -171,8 +186,9 @@ void createAccount() {
     printf("\n==================================\n");
         
     printf("Enter new username: ");
-    scanf(" %[^\n]%*c", username);
+    scanf(" %[^\n]%*c", username); // Input new username
     
+    // Check if username already exists
     for (int i = 0; i < userCount; i++) {
         if (strcmp(users[i].username, username) == 0) {
             printf("Username already exists. Please choose a different one.\n");
@@ -181,20 +197,22 @@ void createAccount() {
     }
 
     printf("Enter new password: ");
-    scanf(" %[^\n]%*c", password);
+    scanf(" %[^\n]%*c", password); // Input new password
 
+    // Store the new user details
     strcpy(users[userCount].username, username);
     strcpy(users[userCount].password, password);
-    users[userCount].borrowedCount = 0;
-    userCount++;
+    users[userCount].borrowedCount = 0;// Initialize borrowed books count
+    userCount++; // Increment the user count
 
     printf("\nAccount created successfully! You can now log in.");
     printf("\n__");
     printf("\n\nPress any key to return to MainScreen...");
-    getchar();
+    getchar();  // Wait for user to press a key
     clrscr();
 }
 
+// Admin dashboard function
 void adminDashboard() {
     int choice;
     while (1) {
@@ -209,46 +227,47 @@ void adminDashboard() {
         printf("6- Check available books\n");
         printf("0- Exit\n");
         printf("Enter your choice: ");
-        scanf("%d", &choice);
+        scanf("%d", &choice);  // Get admin choice
 
+        // Handle different admin choices
         switch (choice) {
             case 1: 
-                displayBooks();
+                displayBooks(); // Display all books
                 printf("\nPress any key to return to Admin Dashboard...");
                 getchar();
                 getchar();
                 break;
             case 2: 
-                addBook();
+                addBook(); // Add a new book
                 printf("\nPress any key to return to Admin Dashboard...");
                 getchar();
                 break;
             case 3: 
-                deleteBook();
+                deleteBook(); // Delete a book
                 printf("\nPress any key to return to Admin Dashboard...");
                 getchar();
                 break;
             case 4: 
-                searchByTitle();
+                searchByTitle(); // Search books by title
                 printf("\nPress any key to return to Admin Dashboard...");
                 getchar();
                 getchar();
                 break;
             case 5: 
-                searchByAuthor();
+                searchByAuthor(); // Search books by author
                 printf("\nPress any key to return to Admin Dashboard...");
                 getchar();
                 getchar();
                 break;
             case 6:
-                checkAvailableBooks();
+                checkAvailableBooks(); // Check available books
                 printf("\nPress any key to return to Admin Dashboard...");
                 getchar();
                 getchar();
                 break;
             case 0:
             	clrscr();
-                return;
+                return; // Exit dashboard
             default:
                 printf("Invalid choice. Please try again.\n");
         }
@@ -256,6 +275,7 @@ void adminDashboard() {
     }
 }
 
+// User dashboard function
 void userDashboard() {
     int choice;
     while (1) {
@@ -269,44 +289,45 @@ void userDashboard() {
         printf("6- Add book to cart\n");
         printf("0- Exit\n");
         printf("Enter your choice: ");
-        scanf("%d", &choice);
+        scanf("%d", &choice);// Get user choice
 
+        // Handle user choices
         switch (choice) {
             case 1:
-                displayBooks();
+                displayBooks(); // Display all books
+                printf("\nPress any key to return to User Dashboard...");
+                getchar(); // Wait for user input
+                getchar();
+                break;
+            case 2:
+                searchByTitle(); // Search books by title
+                printf("\nPress any key to return to User Dashboard...");
+                getchar();
+                break;
+            case 3:
+                searchByAuthor(); // Search books by author
+                printf("\nPress any key to return to User Dashboard...");
+                getchar();
+                break;
+            case 4:
+                displayBooksBySection(); // Display books by section
+                printf("\nPress any key to return to User Dashboard...");
+                getchar();
+                break;
+            case 5:
+                displayBorrowedBooks(); // View borrowed books
                 printf("\nPress any key to return to User Dashboard...");
                 getchar();
                 getchar();
                 break;
-            case 2:
-                searchByTitle();
-                 printf("\nPress any key to return to User Dashboard...");
-                getchar();
-                break;
-            case 3:
-                searchByAuthor();
-                 printf("\nPress any key to return to User Dashboard...");
-                getchar();
-                break;
-            case 4:
-                displayBooksBySection();
-                 printf("\nPress any key to return to User Dashboard...");
-                getchar();
-                break;
-            case 5:
-                displayBorrowedBooks();
-                 printf("\nPress any key to return to User Dashboard...");
-                getchar();
-                getchar();
-                break;
             case 6:
-                addBookToCart();
-                 printf("\nPress any key to return to User Dashboard...");
+                addBookToCart(); // Borrow a book
+                printf("\nPress any key to return to User Dashboard...");
                 getchar();
                 getchar();
                 break;
             case 0:
-                return;
+                return; // Exit dashboard
             default:
                 printf("Invalid choice. Please try again.\n");
         }
