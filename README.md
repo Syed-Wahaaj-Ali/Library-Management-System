@@ -51,28 +51,6 @@ Library Management System
 
 ---
 
-## How to Run
-
-1. Clone the repository:
-    ```bash
-    git clone https://github.com/YourUsername/Library-Management-System.git
-    cd Library-Management-System
-    ```
-
-2. Compile the C program:
-    ```bash
-    gcc LibraryManagementSystem.c -o library_system
-    ```
-
-3. Run the program:
-    ```bash
-    ./library_system
-    ```
-
-4. Follow the on-screen instructions to log in, create an account, manage books, and perform other operations.
-
----
-
 ## Functions Explained
 
 ### Admin Functions:
